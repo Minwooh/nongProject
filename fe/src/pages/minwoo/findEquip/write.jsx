@@ -255,19 +255,24 @@ const LinkBtn = styled.button`
 `;
 
 const Write = ({ items, setItems }) => {
+  //내용 입력
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [price, setPrice] = useState("");
   const [comments, setComments] = useState([]);
-  const [imgFile, setImgFile] = useState([]); // 이미지 배열
+  const [imgFile, setImgFile] = useState([]);
   const [doValue, setDoValue] = useState("new");
   const [dongValue, setDongValue] = useState("new");
   //링크
   const [isLinkModalVisible, setLinkModalVisible] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
-
   const [isLinkButtonVisible, setLinkButtonVisible] = useState(false);
 
+  //id 가져오기
+  let id = JSON.parse(localStorage.getItem("id"));
+  id = id ?? 0;
+
+  //마우스 오버 아웃 인지
   const handleMouseEnter = () => {
     setLinkButtonVisible(true);
   };
@@ -276,11 +281,7 @@ const Write = ({ items, setItems }) => {
     setLinkButtonVisible(false);
   };
 
-  // const handleLinkButtonClick = (e) => {
-  //   e.stopPropagation(); // 클릭 이벤트가 상위 요소로 전파되는 것을 막음
-  //   // 여기서 링크 버튼 클릭 시 원하는 동작을 수행할 수 있습니다.
-  //   console.log("링크 버튼이 클릭되었습니다.");
-  // };
+  //이미지 추가
   const upload = useRef();
 
   const imgUpload = () => {
@@ -290,10 +291,6 @@ const Write = ({ items, setItems }) => {
       URL.createObjectURL(upload.current.files[0]),
     ]);
   };
-  //
-
-  let id = JSON.parse(localStorage.getItem("id"));
-  id = id ?? 0;
 
   const navigate = useNavigate();
 
