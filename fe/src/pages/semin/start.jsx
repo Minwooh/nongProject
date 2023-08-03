@@ -171,6 +171,10 @@ const Start = () => {
     setSelectedImageIndex(currentIndex);
   }, [currentIndex]);
 
+  const handleMenuClick = () => {
+    alert("로그인을 먼저 해주세요.");
+  };
+
   return (
     <Container>
       <Logo>
@@ -250,18 +254,18 @@ const Start = () => {
           justifyContent: "center",
         }}
       >
-        <Menu>
+        <Menu onClick={handleMenuClick}>
           농기구
           <br />
           검색
         </Menu>
-        <Menu>
+        <Menu onClick={handleMenuClick}>
           토지
           <br />
           검색
         </Menu>
-        <Menu>품앗이</Menu>
-        <Menu>
+        <Menu onClick={handleMenuClick}>품앗이</Menu>
+        <Menu onClick={handleMenuClick}>
           거래
           <br />
           채팅
