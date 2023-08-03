@@ -67,6 +67,7 @@ const MiddleTitle = styled.div`
   line-height: normal;
 `;
 const MiddleCondition = styled.div`
+  width: 500px;
   margin-top: 8px;
   margin-bottom: 6px;
 `;
@@ -160,6 +161,50 @@ const ListBox = styled.div`
   padding-top: 5px;
 `;
 
+const CustomSelect = styled.select`
+  width: 80px;
+
+  padding-left: 8px;
+  margin-left: 10px;
+
+  -moz-appearance: none;
+  appearance: none;
+
+  background: url("/images2/arrow.png") no-repeat #efefef;
+  background-position: 66px;
+  background-size: 10px;
+
+  border: none;
+  color: #717171;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
+const CustomSort = styled.select`
+  width: 80px;
+
+  padding-left: 18px;
+  margin-left: 10px;
+
+  -moz-appearance: none;
+  appearance: none;
+
+  background: url("/images2/arrow.png") no-repeat rgba(34, 90, 0, 0.18);
+  background-position: 95px;
+  background-size: 10px;
+
+  border: none;
+  color: #717171;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
 const WhiteBox = styled.div`
   width: 360px;
   height: 65px;
@@ -189,6 +234,7 @@ const Title = styled.div`
   margin-top: -50px;
   margin-left: 80px;
 `;
+
 const Preview = styled.div`
   white-space: no-wrap;
   overflow: hidden;
@@ -228,6 +274,49 @@ const ButtonWrite = styled.button`
 `;
 
 const FindPage = ({ items, setItems }) => {
+  const [selectedDo, setSelectedDo] = useState("new");
+  const [selectedDong, setSelectedDong] = useState("new");
+  const [filteredItems, setFilteredItems] = useState(items);
+
+  // BtnLooking 버튼 클릭 시 호출되는 함수
+  const handleBtnLookingClick = () => {
+    // 선택한 시/도와 시/군/구에 해당하는 아이템들을 필터링하여 filteredItems 상태에 저장
+    // SetMin과 SetMax의 값을 가져와서 가격 범위 설정
+    const minPrice = parseInt(document.getElementById("SetMin").value);
+    const maxPrice = parseInt(document.getElementById("SetMax").value);
+
+    const filtered = items.filter((item) => {
+      if (selectedDo === "new" || selectedDong === "new") {
+        return true; // "시/도"나 "시/군/구"를 선택하지 않은 경우 모든 아이템 표시
+      }
+
+      return item.do === selectedDo && item.dong === selectedDong;
+    });
+
+    if (isNaN(minPrice) || isNaN(maxPrice)) {
+      setFilteredItems(filtered);
+      return; // 필터링하지 않고 함수를 종료합니다.
+    }
+
+    // 가격 범위로 추가적으로 필터링합니다.
+    const filteredByPrice = filtered.filter((item) => {
+      // 아이템의 가격을 숫자로 변환하여 비교합니다.
+      const itemPrice = parseInt(item.price);
+      // 아이템의 가격이 지정된 범위 내에 있는지 확인합니다.
+      return itemPrice >= parseInt(minPrice) && itemPrice <= parseInt(maxPrice);
+    });
+
+    // 선택한 정렬 옵션에 따라 필터링된 결과를 정렬합니다.
+    const sortedItems = sortItems(filteredByPrice);
+
+    setFilteredItems(sortedItems);
+  };
+
+  // filteredItems가 변경될 때마다 호출되는 useEffect
+  useEffect(() => {
+    setFilteredItems(items); // 최초 렌더링 시 모든 아이템을 보여주도록 설정
+  }, [items]);
+
   const navigate = useNavigate();
 
   // 초기 로딩 시점에 localStorage에서 items 읽어오기
@@ -239,7 +328,7 @@ const FindPage = ({ items, setItems }) => {
   }, [setItems]);
 
   const GoWrite = () => {
-    navigate("/posts/");
+    navigate("/write");
   };
 
   const GoMy = () => {
@@ -263,10 +352,31 @@ const FindPage = ({ items, setItems }) => {
     );
   };
 
-  const ListContent = ({ item }) => {
-    const imageUrl = item.image ? item.image : "/images2/noImg.png";
+  // 정렬 함수
+  const sortItems = (itemsToSort) => {
+    const value = document.getElementById("sortSelect").value;
+    let sortedItems = [...itemsToSort];
 
-    console.log(item.img);
+    switch (value) {
+      case "new":
+        sortedItems.sort((a, b) => b.id - a.id); // 최신순으로 정렬
+        break;
+      case "name":
+        sortedItems.sort((a, b) => a.title.localeCompare(b.title)); // 이름순으로 정렬
+        break;
+      case "old":
+        sortedItems.sort((a, b) => a.id - b.id); // 오래된순으로 정렬
+        break;
+      default:
+        break;
+    }
+
+    return sortedItems;
+  };
+
+  const ListContent = ({ item }) => {
+    const imageUrl = item.image ? item.image : "./images2/noImg.png";
+
     const GoFind2 = () => {
       // items 배열에서 아이템의 인덱스 찾기
       const itemIndex = items.findIndex((i) => i.id === item.id);
@@ -287,7 +397,8 @@ const FindPage = ({ items, setItems }) => {
           item.id
         )}&count=${encodeURIComponent(item.count)}
         &image=${encodeURIComponent(item.image)}
-        &date=${encodeURIComponent(item.date)}`
+        &date=${encodeURIComponent(item.date)}
+        &link=${encodeURIComponent(item.link)}`
       );
     };
 
@@ -295,6 +406,7 @@ const FindPage = ({ items, setItems }) => {
       <WhiteBox key={item.id} onClick={GoFind2}>
         <LookImg src={imageUrl}></LookImg>
         <Title>{item.title}</Title>
+        {/* <span>{item.price}</span> */}
         <Preview>{item.content}</Preview>
         <SeedImg>
           <img src="./images2/seed.png" alt="시드" />
@@ -317,38 +429,47 @@ const FindPage = ({ items, setItems }) => {
           <MiddleTitle>농기구검색</MiddleTitle>
           <MiddleCondition>
             지역
-            <select
+            <CustomSelect
               name="choice"
-              style={{ marginLeft: "10px", width: "60px", height: "20px" }}
+              value={selectedDo}
+              onChange={(e) => setSelectedDo(e.target.value)}
             >
               <option value="new">시/도</option>
-            </select>
-            <select
+              <option value="do1">고양시</option>
+            </CustomSelect>
+            <CustomSelect
               name="choice"
-              style={{ marginLeft: "10px", width: "60px", height: "20px" }}
+              value={selectedDong}
+              onChange={(e) => setSelectedDong(e.target.value)}
             >
               <option value="new">시/도</option>
-            </select>
+              <option value="dong1">일산서구</option>
+            </CustomSelect>
           </MiddleCondition>
           가격설정
           <MiddleSetLine>
-            <SetMin placeholder="최소금액"></SetMin>~
-            <SetMax placeholder="최대금액"></SetMax>
+            <SetMin id="SetMin" placeholder="최소금액"></SetMin>~
+            <SetMax id="SetMax" placeholder="최대금액"></SetMax>
           </MiddleSetLine>
-          <BtnLooking>매물 조회</BtnLooking>
+          <BtnLooking onClick={handleBtnLookingClick}>매물 조회</BtnLooking>
         </White>
       </MiddleBox>
       <ConditionBox>
         {" "}
         정렬조건
-        <select name="choice" style={{ marginLeft: "10px", width: "110px" }}>
-          <option value="new">최신 등록순</option>
-          <option value="name">이름순</option>
+        <CustomSort
+          id="sortSelect"
+          name="choice"
+          style={{ marginLeft: "10px", width: "110px" }}
+          onChange={() => setFilteredItems(sortItems(filteredItems))}
+        >
           <option value="old">오래된순</option>
-        </select>
+          <option value="name">이름순</option>
+          <option value="new">최신 등록순</option>
+        </CustomSort>
       </ConditionBox>
       <ListBox>
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <ListContent key={item.id} item={item} />
         ))}
       </ListBox>

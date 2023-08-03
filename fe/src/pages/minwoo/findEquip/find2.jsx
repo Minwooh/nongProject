@@ -128,9 +128,9 @@ const WhiteTitle = styled.span`
   line-height: normal;
 `;
 const WhiteContent = styled.div`
-  height: 100px;
+  margin-top: 170px;
 
-  margin-top: 6px;
+  height: 100px;
   padding: 10px;
 
   overflow: auto;
@@ -148,10 +148,12 @@ const WhiteContent = styled.div`
   line-height: normal;
 `;
 const WhitePrice = styled.div`
-  width: 109px;
+  width: 104px;
   height: 27px;
 
-  margin-top: 10px;
+  padding-left: 6px;
+
+  margin-top: 6px;
   margin-left: 150px;
 
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25) inset;
@@ -186,12 +188,22 @@ const BottomBtn = styled.button`
 `;
 
 const CommentCountBox = styled.div`
-  width: 414px;
-  height: 43px;
+  width: 80px;
+  height: 33px;
+
+  padding-top: 10px;
+  padding-left: 333px;
 
   margin-top: 60px;
   background: #fff;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+
+  color: #000;
+  font-family: Inter;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 `;
 const CommentsBox = styled.div`
   margin-top: 10px;
@@ -282,6 +294,7 @@ const SendInput = styled.input`
 const Find2 = ({ item }) => {
   const navigate = useNavigate();
   const [imageSrc, setImageSrc] = useState("/images2/whiteHeart.png");
+
   const [comments, setComments] = useState([]); // 댓글 목록 상태
   const [newComment, setNewComment] = useState(""); // 새로운 댓글 입력값 상태
   const [isSecret, setIsSecret] = useState(false); // 비밀댓글 여부를 나타내는 상태
@@ -299,6 +312,8 @@ const Find2 = ({ item }) => {
 
   const image = queryParams.get("image");
   const imageUrl = image ? image : null;
+
+  const link = queryParams.get("link") || "";
 
   // 컴포넌트가 마운트될 때 로컬 스토리지에서 댓글 목록을 가져와서 설정
   useEffect(() => {
@@ -320,6 +335,19 @@ const Find2 = ({ item }) => {
 
     updateLocalStorage(newLikeValue);
   }, [imageSrc]);
+
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("ITEMS")) || [];
+    const itemIndex = items.findIndex((item) => item.id === parseInt(id, 10));
+
+    if (itemIndex !== -1) {
+      setImageSrc(
+        items[itemIndex].like
+          ? "/images2/fillHeart.png"
+          : "/images2/whiteHeart.png"
+      );
+    }
+  }, []);
 
   const updateLocalStorage = (newLikeValue) => {
     const items = JSON.parse(localStorage.getItem("ITEMS"));
@@ -433,11 +461,42 @@ const Find2 = ({ item }) => {
               {count}
             </span>
           </div>
+          {link && ( // Add conditional rendering here
+            <div
+              style={{
+                width: "200px",
+                marginTop: "15px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              <img src="/images2/greenLink.png" style={{ width: "10px" }} />
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: " #969696",
+
+                  fontSize: "10px",
+                }}
+              >
+                {" "}
+                {link}{" "}
+              </a>
+            </div>
+          )}
           {imageUrl && (
             <img
               src={imageUrl}
               alt="이미지"
-              style={{ height: "150px", marginLeft: "70px", marginTop: "30px" }}
+              style={{
+                position: "absolute",
+                height: "150px",
+                marginLeft: "70px",
+                marginTop: "20px",
+              }}
             />
           )}
           <WhiteContent>{content}</WhiteContent>
@@ -460,7 +519,22 @@ const Find2 = ({ item }) => {
         </BottomBtn>
       </BottomBox>
 
-      <CommentCountBox></CommentCountBox>
+      <CommentCountBox>
+        댓글
+        <span
+          style={{
+            marginLeft: "10px",
+            color: "#225A00",
+            fontFamily: "Inter",
+            fontSize: "17px",
+            fontStyle: "normal",
+            fontWeight: "600",
+            lineHeight: "normal",
+          }}
+        >
+          {comments.length}
+        </span>
+      </CommentCountBox>
       <CommentsBox>
         {comments.map((comment) => (
           <Comment key={comment.id}>
