@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Container = styled.div`
   width: 414px;
@@ -359,6 +360,47 @@ const Write = ({ items, setItems }) => {
     localStorage.setItem("id", JSON.stringify(++id));
 
     GoFind(newItem);
+
+    // const newItem = {
+    //   id: id,
+    //   title: title,
+    //   content: content,
+    //   price: price,
+    //   like: false,
+    //   count: 0,
+    //   image: imgFile.length > 0 ? imgFile : ["./images2/noImg.png"],
+    //   date: `${year}년 ${month}월 ${day}일`,
+    //   comments: comments,
+    //   do: doValue, // 선택한 시/도 값 추가
+    //   dong: dongValue, // 선택한 시/군/구 값 추가
+    //   links: linkUrl, // 링크 정보 추가
+
+    //   // 이하의 필드들은 다른 정보에 따라서 수정해야 합니다.
+    //   photo: null, // 이미지 처리를 위한 데이터 (이미지 URL 등) 추가 필요
+    //   writer: "", // 작성자 정보 등 추가 필요
+    //   replies: [], // 댓글 등 추가 필요
+    //   bookmarksCount: 0, // 북마크 수 등 추가 필요
+    // };
+
+    // try {
+    //   // HTTP POST 요청으로 새로운 게시물 생성
+    //   axios.post("http://127.0.0.1:8000/posts/", newItem).then((response) => {
+    //     // 서버로부터의 응답 처리 (생략 가능)
+    //     console.log("게시물 생성 성공:", response.data);
+
+    //     // 아래 두 줄을 서버 응답을 받기 전에 먼저 실행하여 새로운 게시물을 화면에 표시합니다.
+    //     setItems((prevItems) => [...prevItems, newItem]);
+    //     localStorage.setItem("ITEMS", JSON.stringify([...items, newItem]));
+
+    //     // 이후의 동작은 서버 응답을 받은 후에 실행합니다.
+    //     localStorage.setItem("id", JSON.stringify(++id));
+    //     GoFind(newItem);
+    //   });
+    // } catch (error) {
+    //   // 에러 발생 시 에러 처리
+    //   console.error("Error creating new post:", error);
+    //   // 에러 처리에 대한 로직 추가 필요 (예: 경고창 등으로 사용자에게 알림)
+    // }
   };
 
   const GoFind = (newItem) => {

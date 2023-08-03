@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
@@ -43,7 +43,7 @@ const MiddleTop = () => {
     <div
       style={{
         height: "55px",
-        paddingLeft: "30px",
+        marginLeft: "-200px",
         paddingTop: "18px",
       }}
     >
@@ -80,12 +80,31 @@ const Line = styled.div`
 `;
 
 const MiddleBox = styled.div`
-  background: #00ff22;
-  width: 370px;
-  height: 500px;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 370px; /* 상위 컨테이너인 MiddleBox의 너비를 고정 */
   margin-left: 23px;
 `;
+const MiddleContent = styled.div`
+  height: 420px;
+  width: 100%; /* Content의 너비를 100%로 설정 */
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* 오른쪽 정렬 */
+  justify-content: flex-start; /* 아래쪽 정렬 */
+`;
+const Content = styled.div`
+  height: auto; /* 높이 자동으로 조절되도록 변경 */
+  margin-top: 10px;
+  padding: 5px;
+
+  border-radius: 10px;
+  background: #93d283;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.4);
+`;
+
 const BottomBox = styled.div`
   width: 347px;
   height: 45px;
@@ -113,8 +132,26 @@ const BottomInput = styled.input`
 const ChattPage = () => {
   const navigate = useNavigate();
 
+  const [message, setMessage] = useState(""); // 입력한 메시지를 저장하는 상태 변수
+  const [messages, setMessages] = useState([]);
+
+  const handleMessageChange = (event) => {
+    setMessage(event.target.value);
+  };
+
+  const handleSend = () => {
+    if (message.trim() !== "") {
+      setMessages([...messages, message]);
+      setMessage(""); // 메시지 전송 후 입력 필드 초기화
+    }
+  };
+
   const GoMy = () => {
     navigate("/myPage");
+  };
+
+  const GoHome = () => {
+    navigate("/afterLogin");
   };
 
   const Logout = () => {
@@ -134,22 +171,32 @@ const ChattPage = () => {
     <Container>
       <Top />
       <TitleBox>
-        <img src="/images2/title.png" alt="있농" />
+        <img src="/images2/title.png" alt="있농" onClick={GoHome} />
         <Line></Line>
       </TitleBox>
 
       <MiddleBox>
         <MiddleTop />
+        <MiddleContent>
+          {messages.map((msg, index) => (
+            <Content key={index}>{msg}</Content>
+          ))}
+        </MiddleContent>
       </MiddleBox>
 
       <BottomBox>
         <span style={{ position: "absolute", marginTop: "6px" }}>입력</span>
-        <BottomInput></BottomInput>
+        <BottomInput
+          value={message}
+          onChange={handleMessageChange}
+          placeholder="메시지를 입력하세요..."
+        ></BottomInput>
         <button
           style={{
             border: "none",
             background: "000000",
           }}
+          onClick={handleSend}
         >
           <img
             src="/images2/send (3).png"

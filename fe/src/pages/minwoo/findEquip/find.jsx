@@ -328,7 +328,7 @@ const FindPage = ({ items, setItems }) => {
   }, [setItems]);
 
   const GoWrite = () => {
-    navigate("/write");
+    navigate("/posts/");
   };
 
   const GoMy = () => {
