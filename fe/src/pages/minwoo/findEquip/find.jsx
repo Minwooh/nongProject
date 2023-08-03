@@ -264,8 +264,9 @@ const FindPage = ({ items, setItems }) => {
   };
 
   const ListContent = ({ item }) => {
-    const imageUrl = item.image ? item.image : "./images2/noImg.png";
+    const imageUrl = item.image ? item.image : "/images2/noImg.png";
 
+    console.log(item.img);
     const GoFind2 = () => {
       // items 배열에서 아이템의 인덱스 찾기
       const itemIndex = items.findIndex((i) => i.id === item.id);
