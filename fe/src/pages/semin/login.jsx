@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import "./Placeholder.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Container = styled.div`
   position: relative;
@@ -144,8 +145,25 @@ const Login = () => {
     if (id.trim() === "" || pw.trim() === "") {
       return;
     }
-    localStorage.setItem("loggedInUserID", id);
-    navigate("/afterlogin");
+    const loginData = {
+      username: id,
+      password: pw,
+    };
+
+    const backendUrl = "http://127.0.0.1:8000/rest-auth/login/";
+
+    axios
+      .post(backendUrl, loginData)
+      .then((response) => {
+        console.log("로그인 성공:", response.data);
+        // 로그인이 성공하면 로그인된 사용자의 정보를 저장하고, 이동할 경로를 설정합니다.
+        localStorage.setItem("loggedInUserID", id);
+        navigate("/afterlogin");
+      })
+      .catch((error) => {
+        console.error("로그인 실패:", error);
+        // 로그인이 실패하면 실패 처리를 수행하거나 에러 메시지를 보여줄 수 있습니다.
+      });
   };
 
   const [id, setID] = useState("");

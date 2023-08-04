@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Container = styled.div`
   position: relative;
@@ -264,7 +265,24 @@ const Join = () => {
     if (pw !== pwcheck) {
       return;
     }
-    setShowPopup(true);
+
+    const userData = {
+      username: id,
+      password: pw,
+    };
+
+    const backendUrl = "http://127.0.0.1:8000/users/";
+
+    axios
+      .post(backendUrl, userData)
+      .then((response) => {
+        console.log("회원가입 성공:", response.data);
+        // 회원가입 성공하면 팝업을 띄우기
+        setShowPopup(true);
+      })
+      .catch((error) => {
+        console.error("회원가입 실패:", error);
+      });
   };
 
   const handleClosePopup = () => {
