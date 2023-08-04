@@ -67,7 +67,7 @@ const Input = styled.input`
 const ContentBox = styled.div`
   position: absolute;
 
-  height: 442px;
+  height: 450px;
   width: 370px;
 
   margin-left: 23px;
@@ -92,12 +92,35 @@ const ConditionDo = styled.div`
 const ConditionDong = styled.div`
   postion: relative;
 
-  margin-top: -24px;
+  margin-top: -22px;
   margin-left: 135px;
 `;
 
+const CustomSelect = styled.select`
+  width: 80px;
+  height: 23px;
+
+  padding-left: 8px;
+  margin-left: 10px;
+
+  -moz-appearance: none;
+  appearance: none;
+
+  background: url("/images2/arrow.png") no-repeat #efefef;
+  background-position: 64px;
+  background-size: 10px;
+
+  border: none;
+  color: #717171;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
 const TextBox = styled.div`
-  height: 330px;
+  height: 345px;
   width: 330px;
 
   margin-top: 15px;
@@ -109,15 +132,6 @@ const TextBox = styled.div`
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.4);
 `;
 
-const InputImg = styled.div`
-  width: 200px;
-  height: 160px;
-
-  margin-top: 10px;
-  margin-left: 70px;
-
-  background-color: cadetblue;
-`;
 const InputContent = styled.textarea`
   width: 300px;
   height: 115px;
@@ -129,40 +143,57 @@ const InputContent = styled.textarea`
 
   resize: none;
 `;
-const AddBox = styled.div`
-  width: 30px;
-  height: 30px;
-
-  margin-left: 300px;
-  margin-top: -45px;
-
-  padding-left: 8px;
-  padding-top: 10px;
-
-  background-color: rgba(53, 135, 0, 0.31);
-  border-radius: 40px;
-  filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25));
-`;
-const DropdownMenu = styled.ul`
-  height: 23px;
+const LabelDiv = styled.div`
   position: absolute;
-  bottom: 100%;
+
+  top: 50px;
   left: 0;
 
-  padding: 0px;
+  width: 33px;
+  height: 33px;
+
+  padding-left: 10px;
+  padding-top: 10px;
+
+  border-radius: 38px;
+
+  background: rgba(53, 135, 0, 0.31);
+  filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25));
+`;
+const AddBox = styled.div`
+  position: relative;
+
+  margin-left: 290px;
+  margin-top: -100px;
+
+  width: 30px;
+  height: 80px;
+
+  border-radius: 38px;
+
+  filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25));
 `;
 
-const DropdownItem = styled.li`
-  width: 30px;
-  height: 30px;
+const AddLink = styled.button`
+  position: absolute;
 
-  list-style-type: none;
-  cursor: pointer;
-  padding: 4px;
+  top: 15px;
+  left: 0;
 
-  border-radius: 40px;
-  background-color: rgba(53, 135, 0, 0.31);
-  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.4);
+  width: 45px;
+  height: 45px;
+
+  margin-left: 0px;
+  margin-top: -30px;
+
+  padding-left: 8px;
+  padding-top: 8px;
+
+  border-radius: 30px;
+  border: none;
+
+  background: rgba(53, 135, 0, 0.31);
+  filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25));
 `;
 
 const PriceBox = styled.div`
@@ -175,6 +206,7 @@ const AddPrice = styled.input`
 
   border: none;
   margin-left: 5px;
+  margin-top: 15px;
 
   background: #efefef;
 `;
@@ -197,15 +229,59 @@ const Button2 = styled.button`
   line-height: normal;
 `;
 
+const LinkModal = styled.div`
+  margin-bottom: 5px;
+  margin-left: 20px;
+`;
+
+const LinkBtn = styled.button`
+  width: 35px;
+  height: 28px;
+
+  margin-left: 6px;
+  margin-top: 6px;
+
+  border: none;
+
+  border-radius: 12.717px;
+  background: #7c8378;
+
+  color: #fff;
+  font-family: Inter;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+`;
+
 const Write = ({ items, setItems }) => {
+  //내용 입력
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [price, setPrice] = useState("");
   const [comments, setComments] = useState([]);
-  //const [ITEMS, setITEMS] = useState([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [imgFile, setImgFile] = useState([]); // 이미지 배열
+  const [imgFile, setImgFile] = useState([]);
+  const [doValue, setDoValue] = useState("new");
+  const [dongValue, setDongValue] = useState("new");
+  //링크
+  const [isLinkModalVisible, setLinkModalVisible] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [isLinkButtonVisible, setLinkButtonVisible] = useState(false);
 
+  //id 가져오기
+  let id = JSON.parse(localStorage.getItem("id"));
+  id = id ?? 0;
+
+  //마우스 오버 아웃 인지
+  const handleMouseEnter = () => {
+    setLinkButtonVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setLinkButtonVisible(false);
+  };
+
+  //이미지 추가
   const upload = useRef();
 
   const imgUpload = () => {
@@ -215,10 +291,6 @@ const Write = ({ items, setItems }) => {
       URL.createObjectURL(upload.current.files[0]),
     ]);
   };
-  //
-
-  let id = JSON.parse(localStorage.getItem("id"));
-  id = id ?? 0;
 
   const navigate = useNavigate();
 
@@ -242,9 +314,10 @@ const Write = ({ items, setItems }) => {
     navigate("/home");
   };
 
-  const GoInput = () => {
-    navigate("/imgInput");
+  const GoHome = () => {
+    navigate("/afterLogin");
   };
+
   const Top = () => {
     return (
       <TopBox>
@@ -267,9 +340,15 @@ const Write = ({ items, setItems }) => {
       price: price,
       like: false,
       count: 0,
-      image: imgFile,
+
+      image: imgFile.length > 0 ? imgFile : ["./images2/noImg.png"],
       date: `${year}년 ${month}월 ${day}일`,
       comments: comments,
+
+      do: doValue, // 선택한 시/도 값 추가
+      dong: dongValue, // 선택한 시/군/구 값 추가
+
+      link: linkUrl,
     };
 
     setItems((prevItems) => [...prevItems, newItem]);
@@ -278,6 +357,47 @@ const Write = ({ items, setItems }) => {
     localStorage.setItem("id", JSON.stringify(++id));
 
     GoFind(newItem);
+
+    // const newItem = {
+    //   id: id,
+    //   title: title,
+    //   content: content,
+    //   price: price,
+    //   like: false,
+    //   count: 0,
+    //   image: imgFile.length > 0 ? imgFile : ["./images2/noImg.png"],
+    //   date: `${year}년 ${month}월 ${day}일`,
+    //   comments: comments,
+    //   do: doValue, // 선택한 시/도 값 추가
+    //   dong: dongValue, // 선택한 시/군/구 값 추가
+    //   links: linkUrl, // 링크 정보 추가
+
+    //   // 이하의 필드들은 다른 정보에 따라서 수정해야 합니다.
+    //   photo: null, // 이미지 처리를 위한 데이터 (이미지 URL 등) 추가 필요
+    //   writer: "", // 작성자 정보 등 추가 필요
+    //   replies: [], // 댓글 등 추가 필요
+    //   bookmarksCount: 0, // 북마크 수 등 추가 필요
+    // };
+
+    // try {
+    //   // HTTP POST 요청으로 새로운 게시물 생성
+    //   axios.post("http://127.0.0.1:8000/posts/", newItem).then((response) => {
+    //     // 서버로부터의 응답 처리 (생략 가능)
+    //     console.log("게시물 생성 성공:", response.data);
+
+    //     // 아래 두 줄을 서버 응답을 받기 전에 먼저 실행하여 새로운 게시물을 화면에 표시합니다.
+    //     setItems((prevItems) => [...prevItems, newItem]);
+    //     localStorage.setItem("ITEMS", JSON.stringify([...items, newItem]));
+
+    //     // 이후의 동작은 서버 응답을 받은 후에 실행합니다.
+    //     localStorage.setItem("id", JSON.stringify(++id));
+    //     GoFind(newItem);
+    //   });
+    // } catch (error) {
+    //   // 에러 발생 시 에러 처리
+    //   console.error("Error creating new post:", error);
+    //   // 에러 처리에 대한 로직 추가 필요 (예: 경고창 등으로 사용자에게 알림)
+    // }
   };
 
   const GoFind = (newItem) => {
@@ -285,19 +405,41 @@ const Write = ({ items, setItems }) => {
     navigate("/find");
   };
 
-  const handleMouseEnter = () => {
-    setIsDropdownOpen(true);
+  // price를 정수로 변환하는 함수
+  const handlePriceChange = (e) => {
+    const value = e.target.value;
+    const intValue = parseInt(value, 10); // 10진수로 변환
+
+    if (isNaN(intValue) || intValue < 0) {
+      alert("올바른 가격을 입력해주세요.");
+      return;
+    }
+
+    setPrice(intValue);
   };
 
-  const handleMouseLeave = () => {
-    setIsDropdownOpen(false);
+  const handleLinkButtonClick = (e) => {
+    e.stopPropagation();
+    setLinkModalVisible(true);
+  };
+
+  const handleLinkModalClose = () => {
+    setLinkModalVisible(false);
+    setLinkUrl("");
+  };
+
+  const handleLinkModalConfirm = () => {
+    // 입력한 링크를 현재 아이템에 연결하거나 처리하는 로직을 추가합니다.
+    console.log("입력한 링크:", linkUrl);
+    // setLinkModalVisible(false); // 만약 입력 후 자동으로 모달을 닫으려면 추가합니다.
+    // setLinkUrl(""); // 입력 후 자동으로 링크를 초기화하려면 추가합니다.
   };
 
   return (
     <Container>
       <Top />
       <TitleBox>
-        <img src="/images2/title.png" alt="있농" />
+        <img src="/images2/title.png" alt="있농" onClick={GoHome} />
         <Line></Line>
       </TitleBox>
 
@@ -310,35 +452,39 @@ const Write = ({ items, setItems }) => {
         <ConditionBox>
           지역
           <ConditionDo>
-            <select
+            <CustomSelect
               name="choice"
-              style={{
-                marginLeft: "5px",
-                width: "80px",
-                height: "20px",
-                background: "#efefef",
-              }}
+              value={doValue}
+              onChange={(e) => setDoValue(e.target.value)}
             >
               <option value="new">시/도</option>
-            </select>
+              <option value="do1">고양시</option>
+            </CustomSelect>
           </ConditionDo>
           <ConditionDong>
-            <select
+            <CustomSelect
               name="choice"
-              style={{
-                marginLeft: "5px",
-                width: "80px",
-                height: "20px",
-                background: "#efefef",
-              }}
+              value={dongValue}
+              onChange={(e) => setDongValue(e.target.value)}
             >
               <option value="new">시/도</option>
-            </select>
+              <option value="dong1">일산서구</option>
+            </CustomSelect>
           </ConditionDong>
         </ConditionBox>
 
         <TextBox>
-          {/* <InputImg> */}
+          {isLinkModalVisible && (
+            <LinkModal>
+              <input
+                type="text"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+              />
+              <LinkBtn onClick={handleLinkModalConfirm}>확인</LinkBtn>
+              <LinkBtn onClick={handleLinkModalClose}>취소</LinkBtn>
+            </LinkModal>
+          )}
           <div style={{ display: "flex" }}>
             {imgFile?.map((img, idx) => (
               <div
@@ -361,9 +507,11 @@ const Write = ({ items, setItems }) => {
         </TextBox>
 
         <AddBox onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <label for="uplaoad_img">
-            <img src="/images2/img.png" alt="사진첨부" />
-          </label>
+          <LabelDiv>
+            <label for="uplaoad_img">
+              <img src="/images2/img.png" alt="사진첨부" />
+            </label>
+          </LabelDiv>
           <input
             id="uplaoad_img"
             type="file"
@@ -371,18 +519,17 @@ const Write = ({ items, setItems }) => {
             multiple
             onChange={imgUpload}
             accept="image/*"
+            className="custom-input-style"
             style={{
               display: "none",
               cursor: "pointer",
             }}
           />
-          {isDropdownOpen && (
-            <DropdownMenu>
-              <DropdownItem>
-                <img src="/images2/link.png" alt="링크첨부" />
-              </DropdownItem>
-              <DropdownItem></DropdownItem>
-            </DropdownMenu>
+
+          {isLinkButtonVisible && (
+            <AddLink className="add-link-btn" onClick={handleLinkButtonClick}>
+              <img src="/images2/link.png" />
+            </AddLink>
           )}
         </AddBox>
 
@@ -390,7 +537,8 @@ const Write = ({ items, setItems }) => {
           가격
           <AddPrice
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            // onChange={(e) => setPrice(e.target.value)}
+            onChange={handlePriceChange}
           ></AddPrice>
         </PriceBox>
       </ContentBox>
